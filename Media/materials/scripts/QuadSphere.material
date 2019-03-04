@@ -1,0 +1,20 @@
+material Quad/QuadSphere
+{
+	technique
+	{
+		pass
+		{
+			diffuse 0.4 0.4 0.4
+			ambient 0.8 0.8 0.8
+			//specular 0.0 0.0 0.9 68
+			
+			texture_unit
+			{
+				// texture PentOneDFade.png
+				// texture TestMapUv.jpg
+				texture ThisWayUp.jpg
+				colour_op modulate	
+			}
+		}
+	}
+}

@@ -1,0 +1,33 @@
+// Definitions for terrain texture blending
+
+// CG Vertex Shader vs_2_0 - Use diffuse ARGB for detais texture blending
+vertex_program vertexTextureBlendVS cg
+{
+	source vertexTextureBlend2_vs.source
+	profiles vs_2_0 arbvp1
+	entry_point vertexTextureBlendVSMain
+
+	default_params
+	{		
+		// Details for the 0 (closest) light
+		param_named_auto ambientColor ambient_light_colour
+		param_named_auto lightPositionObject light_position_object_space 0
+		param_named_auto diffuseLightColor light_diffuse_colour 0
+				
+		// World view matrix
+		param_named_auto worldViewProj worldViewProj_matrix
+	}
+}
+
+
+// CG Pixel Shader ps_2_0 - Use diffuse ARGB for detais texture blending
+fragment_program vertexTextureBlendPS cg
+{
+	source vertexTextureBlend2_ps.source
+	profiles ps_2_0 arbfp1 fp20
+	entry_point vertexTextureBlendPSMain
+
+	default_params
+	{
+	}
+}

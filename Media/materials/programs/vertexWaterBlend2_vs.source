@@ -1,0 +1,52 @@
+// Use thre normal as the position of the vertex, set texture scaling factor
+void vertexWaterBlendVSMain(float4 position : POSITION,
+							float2 uv       : TEXCOORD0,
+							float4 normal   : NORMAL,
+  
+							out float4 oPosition : POSITION,							
+							out float4 oColor0   : COLOR0,
+							out float4 oColor1   : COLOR1,
+							out float2 oUv       : TEXCOORD0,
+							
+							uniform float4 ambientColor,
+							uniform float4 lightPositionObject,
+							uniform float4 diffuseLightColor,	
+							uniform float waterAlpha,
+							uniform float minWaterAlpha,
+							uniform float4x4 worldViewProj) 
+
+{		
+	// Pickup position from normals
+	float4 waterPosition = normal;
+	
+	
+	// Work out how 'deep' water is at this vertex
+	const float land = length(position);
+	const float water = length(waterPosition);
+	const float deepest = water / 50.0; // 1/25 radius = full depth TODO pass as material param
+	oColor0 = float4(0, 0, 0, 0);
+	float depth = water - land;		
+	// Water above or touching land
+	if (depth >= 0)  
+	{				
+		// Set texture opacity by lerping depth over minWaterAlpha -> waterAlpha
+		depth = depth/deepest;
+		depth = clamp(depth, 0, 1.0);
+		depth = lerp(minWaterAlpha, waterAlpha, depth);
+		oColor0.a = depth;
+	}
+	// else z buffer check will cull anyway
+	
+	
+	// Calculate ambient + diffuse lighting store in color1
+	float4 lightDist = normalize(position - lightPositionObject);	
+	float4 surfNorm = normalize(normal);
+	float d = clamp(dot(lightDist, surfNorm), 0.0, 1.0);
+	oColor1 = ((float4(d, d, d, 1.0)) * diffuseLightColor) * ambientColor;
+	
+	// Set the position in world space from the data in the normal
+	oPosition = mul(worldViewProj, waterPosition);
+	oUv = uv;
+}
+
+

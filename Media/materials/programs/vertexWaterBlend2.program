@@ -1,0 +1,36 @@
+// Definitions for terrain texture water overlay
+
+// CG Vertex Shader vs_2_0 - Use normal for position of water texture overlay
+vertex_program vertexWaterBlendVS cg
+{
+	source vertexWaterBlend2_vs.source
+	profiles vs_2_0 arbvp1
+	entry_point vertexWaterBlendVSMain
+
+	default_params
+	{
+		// Max, min opacity of water 
+		param_named waterAlpha float 0.9
+		param_named minWaterAlpha float 0.2
+		param_named_auto worldViewProj worldViewProj_matrix
+		
+		// Details for the 0 (closest) light
+		param_named_auto ambientColor ambient_light_colour 
+		param_named_auto lightPositionObject light_position_object_space 0
+		param_named_auto diffuseLightColor light_diffuse_colour 0
+	}
+}
+
+
+// CG Pixel Shader ps_2_0 - Use normal for position of water texture overlay
+fragment_program vertexWaterBlendPS cg
+{
+	source vertexWaterBlend2_ps.source
+	profiles ps_2_0 arbfp1 fp20
+	entry_point vertexWaterBlendPSMain
+	
+	default_params
+	{
+		param_named_auto time time_0_1 5
+	}
+}

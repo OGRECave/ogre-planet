@@ -1,0 +1,51 @@
+material Planet/TestMaterial
+{
+	technique
+	{
+		pass
+		{
+			diffuse 0.4 0.4 0.4
+			ambient 0.8 0.8 0.8
+			//specular 0.0 0.0 0.9 68
+			
+			texture_unit
+			{
+				texture_alias BaseTexture
+				// No texture here - gets inserted via set_texture_alias below
+				tex_address_mode clamp
+				colour_op modulate	
+			}
+		}
+	}
+}
+
+
+material Planet/TestMaterial_FR : Planet/TestMaterial
+{
+	set_texture_alias BaseTexture cube_FR.jpg
+}
+
+material Planet/TestMaterial_BK : Planet/TestMaterial
+{
+	set_texture_alias BaseTexture cube_BK.jpg
+} 
+
+material Planet/TestMaterial_LF : Planet/TestMaterial
+{
+	set_texture_alias BaseTexture cube_LF.jpg
+}  
+
+material Planet/TestMaterial_RT : Planet/TestMaterial
+{
+	set_texture_alias BaseTexture cube_RT.jpg
+}  
+
+material Planet/TestMaterial_DN : Planet/TestMaterial
+{
+	set_texture_alias BaseTexture cube_DN.jpg
+} 
+
+material Planet/TestMaterial_UP : Planet/TestMaterial
+{
+	set_texture_alias BaseTexture cube_UP.jpg
+} 

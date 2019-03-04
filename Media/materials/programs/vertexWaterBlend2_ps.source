@@ -1,0 +1,52 @@
+// Varying inputs to pixel shader
+struct PS_INPUT_STRUCT
+{
+	float4 vertexColor : COLOR;      // Colour from vertex shader
+	float4 color1      : COLOR1;     // Colour from lighting
+	float2 texCoords   : TEXCOORD0;  // Texture coordinates of base quad
+};
+
+
+// Output of pixel shader (required minimium output is colour of this pixel)
+struct PS_OUTPUT_STRUCT
+{
+	float4 color0 : COLOR0;
+};
+
+
+// Terrain detail texture shader
+PS_OUTPUT_STRUCT vertexWaterBlendPSMain(PS_INPUT_STRUCT psInStruct,
+										  uniform float time,
+										  uniform sampler waterMap    : register(s0),
+										  uniform sampler subWaterMap : register(s1))
+{
+   PS_OUTPUT_STRUCT psOutStruct; // What this shader outputs
+   
+	// Sample each texture unit based on the vertex color
+	// Blend (add) texture layers   
+	
+	// Blend the textures - fade between in and out between two textures	
+	float pingPongTime = time * 2.0;
+	if (pingPongTime > 1.0)
+	{
+		pingPongTime = 2.0 - pingPongTime;
+	}	
+	float invPingPongTime = 1.0 - pingPongTime;
+	float4 tex = tex2D(waterMap, psInStruct.texCoords) * pingPongTime;
+	psOutStruct.color0 = (tex * 0.5);
+	tex = tex2D(subWaterMap, psInStruct.texCoords) * invPingPongTime;
+	psOutStruct.color0 += (tex * 0.5);		
+	
+	// Set the alpha from the vertex shader value (water depth)
+	psOutStruct.color0.a = psInStruct.vertexColor.a;
+	
+	// Blend in lighting from vertex shader
+	psOutStruct.color0 *= psInStruct.color1;
+	
+	return psOutStruct;
+}
+
+
+
+   
+   

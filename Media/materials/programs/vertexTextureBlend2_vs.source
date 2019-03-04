@@ -1,0 +1,29 @@
+// Really just a passthru to pixel shader really - sets scale of all texture coordinates
+void vertexTextureBlendVSMain(float4 position : POSITION,  // From mesh VES_POSITION in object space
+										float4 normal   : NORMAL,    // From mesh VES_NORMAL (=unit sphere scaled to radius)
+										float2 uv       : TEXCOORD0, // From mesh VES_TEXCOORD0
+										float4 color    : COLOR,     // From mesh VES_DIFFUSE
+  
+										out float4 oPosition : POSITION,	 // In world space									
+										out float4 oColor0   : COLOR0,    // Feed to pixel shader
+										out float4 oColor1   : COLOR1,    // Feed to pixel shader
+										out float2 oUv       : TEXCOORD0, // Feed to pixel shader 										
+							  
+										uniform float4 ambientColor,
+										uniform float4 lightPositionObject,
+										uniform float4 diffuseLightColor,										
+										uniform float4x4 worldViewProj) 
+
+{	
+	// Calculate ambient + diffuse lighting store in color1
+	float4 lightDist = normalize(position - lightPositionObject);	
+	float4 surfNorm = normalize(normal);
+	float d = clamp(dot(lightDist, surfNorm), 0.0, 1.0);
+	oColor1 = ((float4(d, d, d, 1.0)) * diffuseLightColor) * ambientColor;
+
+	oPosition = mul(worldViewProj, position);	 // Set the position in world space
+	oUv = uv;	      // U, v pass thru
+	oColor0 = color;  // Texture blending color from mesh VES_DIFFUSE
+}
+
+

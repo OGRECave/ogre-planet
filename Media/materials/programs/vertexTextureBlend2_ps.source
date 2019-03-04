@@ -1,0 +1,69 @@
+// Varying inputs to pixel shader
+struct PS_INPUT_STRUCT
+{
+	float4 vertexColor : COLOR0;     // Colour from vertex shader
+	float4 color1      : COLOR1;     // Colour from lighting
+	float2 texCoords   : TEXCOORD0;  // Texture coordinates of base quad
+};
+
+
+// Output of pixel shader (required minimium output is colour of this pixel)
+struct PS_OUTPUT_STRUCT
+{
+	float4 color0 : COLOR0;
+};
+
+
+// Terrain detail texture shader
+PS_OUTPUT_STRUCT vertexTextureBlendPSMain(PS_INPUT_STRUCT psInStruct,
+										  uniform sampler baseMap 	  : register(s0),
+										  uniform sampler dirtMap    : register(s1),
+										  uniform sampler rockMap    : register(s2),
+										  uniform sampler snowMap    : register(s3))
+{
+   PS_OUTPUT_STRUCT psOutStruct; // What this shader outputs
+   
+   // Sample each texture unit based on the vertex color
+   // Blend (add) texture layers   
+	psOutStruct.color0 = float4(0, 0, 0, 0);
+	
+	if(psInStruct.vertexColor.r) 
+	{
+		float4 base = tex2D(baseMap, psInStruct.texCoords) * psInStruct.vertexColor.r;
+		// DEBUG base = float4(psInStruct.vertexColor.r, 0, 0, 1);	 // Red	
+		psOutStruct.color0 += base;
+	}
+	
+	if(psInStruct.vertexColor.g) 
+	{
+		float4 dirt = tex2D(dirtMap, psInStruct.texCoords) * psInStruct.vertexColor.g;
+		// DEBUG dirt = float4(0, psInStruct.vertexColor.g, 0, 1);	// Green	
+		psOutStruct.color0 += dirt;
+	}	
+	
+	if(psInStruct.vertexColor.b) 
+	{
+		float4 rock = tex2D(rockMap, psInStruct.texCoords) * psInStruct.vertexColor.b;		
+		// DEBUG rock = float4(0, 0, psInStruct.vertexColor.b, 1);	// Blue			
+		psOutStruct.color0 += rock;
+	}	
+	
+	if(psInStruct.vertexColor.a)
+	{
+		float4 snow = tex2D(snowMap, psInStruct.texCoords) * psInStruct.vertexColor.a;
+		// DEBUG snow = float4(psInStruct.vertexColor.a, psInStruct.vertexColor.a, psInStruct.vertexColor.a, 1);	// White
+		psOutStruct.color0 += snow;
+	}
+
+	
+	// Apply color from vertex lighting
+	psOutStruct.color0 *= psInStruct.color1;	
+	
+	// Input textures shouldn't really have alpha
+	// psOutStruct.color0.a = 1.0;
+	return psOutStruct;
+}
+
+
+
+   

@@ -1,0 +1,147 @@
+material Planet/Planet
+{
+	technique
+	{  
+
+		// Pass one - draw the terrain with detail textures
+		pass
+		{
+			// No scene lighting as using cg
+			lighting off			
+			
+			// Pickup ARGB from vertex for use in detail texturing
+			diffuse vertexcolour        
+
+			vertex_program_ref vertexTextureBlendVS
+			{
+				// Details for the 0 (closest) light
+				param_named_auto ambientColor ambient_light_colour 
+				param_named_auto lightPositionObject light_position_object_space 0
+				param_named_auto diffuseLightColor light_diffuse_colour 0
+								
+				// World view matrix
+				param_named_auto worldViewProj worldviewproj_matrix				
+			}
+
+			fragment_program_ref vertexTextureBlendPS
+			{
+			}
+
+			texture_unit
+			{
+				texture_alias base
+				// DEBUG texture TRed.png
+				texture Grass.png
+			}
+
+			texture_unit
+			{
+				texture_alias dirt
+				// DEBUG texture TGreen.png
+				texture Dirt.png
+			}
+		 
+			texture_unit
+			{
+				texture_alias rock
+				// DEBUG texture TBlue.png
+				texture Rock.png
+			}
+		 
+			texture_unit
+			{
+				texture_alias snow
+				// DEBUG texture TAlpha.png
+				texture Snow.png
+			}
+		}
+
+	  
+		// Pass two draw the water
+		pass
+		{
+			// Check if need to bother rendering pixels
+			depth_check on
+		
+			// But dont write to depth buffer
+			depth_write off
+								
+			// No scene lighting as using cg
+			lighting off
+			ambient 1.0 1.0 1.0
+			
+			// Make land visible through water (sum=1)
+			scene_blend src_alpha one_minus_src_alpha
+			
+			vertex_program_ref vertexWaterBlendVS
+			{
+				// Uniform input to vertex shader
+				// Max, min transparency of water
+				param_named waterAlpha float 0.9
+				param_named minWaterAlpha float 0.2
+				param_named_auto worldViewProj worldviewproj_matrix
+				
+				// Details for the 0 (closest) light
+				param_named_auto ambientColor ambient_light_colour 
+				param_named_auto lightPositionObject light_position_object_space 0
+				param_named_auto diffuseLightColor light_diffuse_colour 0
+			}
+
+			fragment_program_ref vertexWaterBlendPS
+			{
+				// Uniform input to pixel shader				
+				param_named_auto time time_0_1 5
+			}
+
+			texture_unit
+			{
+				texture_alias water
+				// Note - texture should have no alpha - blended internally
+			}
+
+			texture_unit
+			{
+				texture_alias subWater
+				// Note - texture should have no alpha - blended internally				
+			}			
+		}
+	}
+} 
+
+
+// TODO - all textures must be cubic to be seamless
+material Planet/Planet_FR : Planet/Planet
+{
+	set_texture_alias water Water_FR.png
+	set_texture_alias subWater SubWater_FR.png
+}
+
+material Planet/Planet_BK : Planet/Planet
+{
+	set_texture_alias water Water_BK.png
+	set_texture_alias subWater SubWater_BK.png
+} 
+
+material Planet/Planet_LF : Planet/Planet
+{
+	set_texture_alias water Water_LF.png
+	set_texture_alias subWater SubWater_LF.png
+}  
+
+material Planet/Planet_RT : Planet/Planet
+{
+	set_texture_alias water Water_RT.png
+	set_texture_alias subWater SubWater_RT.png
+}  
+
+material Planet/Planet_DN : Planet/Planet
+{
+	set_texture_alias water Water_DN.png
+	set_texture_alias subWater SubWater_DN.png
+} 
+
+material Planet/Planet_UP : Planet/Planet
+{
+	set_texture_alias water Water_UP.png
+	set_texture_alias subWater SubWater_UP.png
+} 
