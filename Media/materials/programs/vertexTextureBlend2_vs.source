@@ -19,7 +19,7 @@ void vertexTextureBlendVSMain(float4 position : POSITION,  // From mesh VES_POSI
 	float4 lightDist = normalize(position - lightPositionObject);	
 	float4 surfNorm = normalize(normal);
 	float d = clamp(dot(lightDist, surfNorm), 0.0, 1.0);
-	oColor1 = ((float4(d, d, d, 1.0)) * diffuseLightColor) * ambientColor;
+	oColor1 = ((float4(d, d, d, 1.0)) * diffuseLightColor) + ambientColor;
 
 	oPosition = mul(worldViewProj, position);	 // Set the position in world space
 	oUv = uv;	      // U, v pass thru

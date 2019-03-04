@@ -42,7 +42,7 @@ void vertexWaterBlendVSMain(float4 position : POSITION,
 	float4 lightDist = normalize(position - lightPositionObject);	
 	float4 surfNorm = normalize(normal);
 	float d = clamp(dot(lightDist, surfNorm), 0.0, 1.0);
-	oColor1 = ((float4(d, d, d, 1.0)) * diffuseLightColor) * ambientColor;
+	oColor1 = ((float4(d, d, d, 1.0)) * diffuseLightColor) + ambientColor;
 	
 	// Set the position in world space from the data in the normal
 	oPosition = mul(worldViewProj, waterPosition);
