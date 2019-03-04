@@ -1,7 +1,7 @@
 #ifndef __PLANET_QUAD_NODE__
 #define __PLANET_QUAD_NODE__
 
-#include "OgrePreRequisites.h"
+#include "OgrePrerequisites.h"
 #include "OgreSceneManager.h"
 #include "OgreCamera.h"
 #include "OgreSceneNode.h"

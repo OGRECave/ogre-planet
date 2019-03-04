@@ -27,7 +27,12 @@ keyboard and mouse movements.
 #ifndef __PLANET_FRAME_LISTENER__
 #define __PLANET_FRAME_LISTENER__
 #include "Ogre.h"
+#include "OgreOverlayManager.h"
+#include "OgreOverlayElement.h"
+#include "OgreOverlay.h"
+#include "OgreWindowEventUtilities.h"
 
+#include <iostream>
 
 
 #pragma warning(push, 3)

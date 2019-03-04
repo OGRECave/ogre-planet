@@ -25,6 +25,7 @@ Description: Base class for all the OGRE examples
 #ifndef __PLANET_APPLICATION__
 #define __PLANET_APPLICATION__
 #include "Ogre.h"
+#include "OgreOverlaySystem.h"
 
 #include "PlanetFrameListener.h"
 
@@ -162,7 +163,7 @@ protected:
 				return true;
 		  }
 #endif
-			if(mRoot->showConfigDialog())
+			if(mRoot->showConfigDialog(NULL))
 			{
 				 // If returned true, user clicked OK so initialise
 				 // Here we choose to let the system create a default rendering window by passing 'true'
@@ -179,6 +180,8 @@ protected:
     {
         // Create the SceneManager, in this case the Octree scene manager
         mSceneMgr = mRoot->createSceneManager("OctreeSceneManager");
+        Ogre::OverlaySystem* pOverlaySystem = new Ogre::OverlaySystem();
+        mSceneMgr->addRenderQueueListener(pOverlaySystem);
     }
     virtual void createCamera(void)
     {

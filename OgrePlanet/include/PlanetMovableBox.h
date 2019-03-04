@@ -54,6 +54,10 @@ namespace OgrePlanet
 		const AxisAlignedBox& getBoundingBox( void ) const;
 		Real getBoundingRadius(void) const;
 	
+		void visitRenderables(Renderable::Visitor* visitor, 
+            bool debugRenderables = false) {
+			visitor->visit(this, 0, false);
+		}
 	};
 }
 #endif

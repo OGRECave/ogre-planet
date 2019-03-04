@@ -98,7 +98,7 @@ namespace OgrePlanet
 		};
 
 		
-		inline const long QuadBounds::getStrideX() const
+		inline const long getStrideX() const
 		{
 			Vector3Int min(minX(), minY(), minZ());
 			Vector3Int max(maxX(), maxY(), maxZ());
@@ -110,7 +110,7 @@ namespace OgrePlanet
 		};
 
 
-		inline const long QuadBounds::getStrideY() const
+		inline const long getStrideY() const
 		{
 			Vector3Int min(minX(), minY(), minZ());
 			Vector3Int max(maxX(), maxY(), maxZ());
@@ -126,7 +126,7 @@ namespace OgrePlanet
 		};
 
 
-		inline const long QuadBounds::getStrideZ() const
+		inline const long getStrideZ() const
 		{
 			Vector3Int min(minX(), minY(), minZ());
 			Vector3Int max(maxX(), maxY(), maxZ());
@@ -141,7 +141,7 @@ namespace OgrePlanet
 			else return 0;  // no z component
 		};
 		
-		inline const Vector3 QuadBounds::getCenter() const
+		inline const Vector3 getCenter() const
 		{
 			Vector3Int center = (a+b+c+d);
 			return Vector3(center.x/4, center.y/4, center.z/4);

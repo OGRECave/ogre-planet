@@ -38,7 +38,7 @@ namespace OgrePlanet
 		const PixelBox &pb = img->getPixelBox();
 		for (uint32 y=0; y<mHeight; y++)
 		{
-			uint32 *data = static_cast<uint32 *>(pb.data) + y*pb.rowPitch;
+			uint32 *data = reinterpret_cast<uint32 *>(pb.data) + y*pb.rowPitch;
 			for (uint32 x=0; x<mWidth; x++)
 			{	
 				// Set the colour components properly

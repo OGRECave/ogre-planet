@@ -71,7 +71,7 @@ namespace OgrePlanet
 		/** Find center of two vertex
  		  Creates new vertex and returns
 		*/
-		static inline Vector3 Utils::centerOf(Vector3 const &a, Vector3 const &b) 
+		static inline Vector3 centerOf(Vector3 const &a, Vector3 const &b) 
 		{
 			Real x, y, z;
 			x = Real((a.x + b.x) / Real(2.0));
@@ -85,7 +85,7 @@ namespace OgrePlanet
 		/** Return vertex moved out to radius of sphere
 			Does not Modify passed object
 		*/
-		static inline Vector3 Utils::spheriseCopy(const Vector3 &abc, Real const radius) 
+		static inline Vector3 spheriseCopy(const Vector3 &abc, Real const radius) 
 		{		
 			Vector3 v(abc);
 			spherise(v, radius);
@@ -97,7 +97,7 @@ namespace OgrePlanet
 		/** Move vertex out to radius of sphere
 			Modifies passed object
 		*/
-		static inline void Utils::spherise(Vector3 &abc, Real const radius)
+		static inline void spherise(Vector3 &abc, Real const radius)
 		{	
 			// http://mathproofs.blogspot.com/2005/07/mapping-cube-to-sphere.html
 			// Convert 3D point on surface of unit cube to point on surface of unit sphere
@@ -141,7 +141,7 @@ namespace OgrePlanet
 		@param radius bounding radius whence returned vector must reside
 		@return random vector
 		*/
-		static inline Vector3 Utils::randVector(Real const radius) 
+		static inline Vector3 randVector(Real const radius) 
 		{
 			Vector3 v (randReal(radius), randReal(radius), randReal(radius));
 			while (v.length() > radius) 

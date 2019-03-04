@@ -32,6 +32,7 @@ the basic resources required for the progress bar and will be loaded automatical
 #include "OgreOverlay.h"
 #include "OgreOverlayManager.h"
 #include "OgreRenderWindow.h"
+#include "OgreOverlayElement.h"
 
 using namespace Ogre;
 
