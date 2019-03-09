@@ -4,12 +4,13 @@ Released under MIT license
 Inspired by the Infinity MMO http://www.infinity-universe.com and http://www.gamedev.net/blog/73-journal-of-ysaneya/
 At the time of writing this game is still yet to be released.
 
+![](screenshot.jpg)
+
 This uses a 'spherized cube' where the twelve faces are subdivided dynamically in realtime, then stitched together.
 The original concept was by 'HexiDave' with code demonstrated only on a single face of a cube http://www.ogre3d.org/phpBB2/viewtopic.php?t=30819
 Permission was sought from HexiDave to publish this derived work back in 2008.
 Others have since taken the core concept & run with it http://www.ogre3d.org/forums/viewtopic.php?t=49849
 
-This project has been abandoned due to problems with texture seams.  
 Texture media needs to be cube maps - arguably the best way to do this is with procedurally generated textures (eg. Perlin noise).
 Popping is also a big issue - this can be limited by generating two levels of detail & alpha blending between them.
 
