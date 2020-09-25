@@ -113,50 +113,7 @@ namespace OgrePlanet
 	void Lut::lookup(const Vector2 &xy, ColourValue &colour) const
 	{
 		uint32 colour32 = lookup(xy);
-		uint32ToColour(colour32, colour);
+		PixelUtil::unpackColour(&colour, PF_A8R8G8B8, &colour32);
 	};
-
-		
-	void Lut::uint32ToColour(const uint32 colour32, ColourValue &colour) const
-	{
-		// Handle endianness
-#if OGRE_ENDIAN == OGRE_ENDIAN_LITTLE
-		// ARGB
-		uchar cA = uchar((colour32 & 0xFF000000) >> 24);
-		uchar cR = uchar((colour32 & 0x00FF0000) >> 16);
-		uchar cG = uchar((colour32 & 0x0000FF00) >> 8);
-		uchar cB = uchar((colour32 & 0x000000FF));
-#elif OGRE_ENDIAN == OGRE_ENDIAN_BIG
-		// BGRA
-		uchar cB = uchar((colour32 & 0xFF000000) >> 24);
-		uchar cG = uchar((colour32 & 0x00FF0000) >> 16);
-		uchar cR = uchar((colour32 & 0x0000FF00) >> 8);
-		uchar cA = uchar((colour32 & 0x000000FF));
-#endif
-		
-		/*
-		// Handle endianness
-#if OGRE_ENDIAN == OGRE_ENDIAN_LITTLE
-		// ARGB
-		uchar cA = uchar((colour32 & 0xFF000000) >> 24);
-		uchar cR = uchar((colour32 & 0x00FF0000) >> 16);
-		uchar cG = uchar((colour32 & 0x0000FF00) >> 8);
-		uchar cB = uchar((colour32 & 0x000000FF));
-#elif OGRE_ENDIAN == OGRE_ENDIAN_BIG
-		// BGRA
-		uchar cB = uchar((colour32 & 0xFF000000) >> 24);
-		uchar cG = uchar((colour32 & 0x00FF0000) >> 16);
-		uchar cR = uchar((colour32 & 0x0000FF00) >> 8);
-		uchar cA = uchar((colour32 & 0x000000FF));
-#endif
-		*/
-
-		// Store resultant colour value
-		colour.a = float(cA) / 255;
-		colour.r = float(cR) / 255;
-		colour.g = float(cG) / 255;
-		colour.b = float(cB) / 255;
-	};
-
 
 } // namespace

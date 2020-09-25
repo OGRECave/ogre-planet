@@ -6,7 +6,6 @@
 #endif
 
 #include "PlanetApplication.h"
-#include "PlanetLoadingBar.h"
 #include "PlanetLogger.h"
 
 #include "PlanetPlanet.h"

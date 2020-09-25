@@ -6,9 +6,6 @@
 #include "OgreStringConverter.h"
 
 
-class Ogre::AxisAlignedBox;
-
-
 namespace OgrePlanet
 {
 
@@ -31,7 +28,6 @@ namespace OgrePlanet
 	class StringConverterEx
 	{
 	public:
-		static Ogre::String toString(const Ogre::AxisAlignedBox &box);		
 		static Ogre::String toString(const Vector3Int &v);
 		static Ogre::String toString(const QuadBounds &qb);
 	};

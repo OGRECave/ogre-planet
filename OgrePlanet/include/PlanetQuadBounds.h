@@ -5,7 +5,6 @@
 #include "OgreVector3.h"
 #include "OgreAxisAlignedBox.h"
 
-#include "PlanetEnum.h"
 #include "PlanetVector3Int.h"
 #include "PlanetLogger.h"
 

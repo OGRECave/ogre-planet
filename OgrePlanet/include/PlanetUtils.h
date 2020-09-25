@@ -22,66 +22,6 @@ namespace OgrePlanet
 	{
 	public:
 
-		/** Swap two vertex
-		*/
-
-		static inline void swap(Vector3 &a, Vector3 &b)
-		{
-			Vector3 temp = a;
-			a = b;
-			b = temp;
-		};
-
-
-		/** Find center of three vertex
- 		  Creates a new vectex and returns
-		*/
-		static inline Vector3 centerOf(
-			Vector3 const &a, 
-			Vector3 const &b, 
-			Vector3 const &c, 
-			Vector3 const &d)
-		{
-			Real x, y, z;
-			x = Real((a.x + b.x + c.x + d.x) / Real(4.0));
-			y = Real((a.y + b.y + c.y + d.y) / Real(4.0));
-			z = Real((a.z + b.z + c.z + d.z) / Real(4.0));
-						  
-			return Vector3(x, y, z);
-		};
-
-
-		/** Find center of three vertex
- 		  Creates a new vectex and returns
-		*/
-		static inline Vector3 centerOf(
-			Vector3 const &a, 
-			Vector3 const &b, 
-			Vector3 const &c)
-		{
-			Real x, y, z;
-			x = Real((a.x + b.x + c.x) / Real(3.0));
-			y = Real((a.y + b.y + c.y) / Real(3.0));
-			z = Real((a.z + b.z + c.z) / Real(3.0));
-						  
-			return Vector3(x, y, z);
-		};
-
-
-		/** Find center of two vertex
- 		  Creates new vertex and returns
-		*/
-		static inline Vector3 centerOf(Vector3 const &a, Vector3 const &b) 
-		{
-			Real x, y, z;
-			x = Real((a.x + b.x) / Real(2.0));
-			y = Real((a.y + b.y) / Real(2.0));
-			z = Real((a.z + b.z) / Real(2.0));
-
-			return Vector3(x, y, z);		
-		};
-
-
 		/** Return vertex moved out to radius of sphere
 			Does not Modify passed object
 		*/

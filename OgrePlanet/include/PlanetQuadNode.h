@@ -7,7 +7,6 @@
 #include "OgreSceneNode.h"
 #include "OgreManualObject.h" // XXX DEBUG
 
-#include "PlanetEnum.h"
 #include "PlanetQuadBounds.h"
 #include "PlanetUtils.h"
 #include "PlanetLut.h"

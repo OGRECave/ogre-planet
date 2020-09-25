@@ -29,16 +29,6 @@
 namespace OgrePlanet
 {
 
-	Ogre::String StringConverterEx::toString(const Ogre::AxisAlignedBox &box)
-	{
-		Ogre::String out;
-		out = StringConverter::toString(box.getMinimum());
-		out += " ";
-		out += StringConverter::toString(box.getMaximum());
-		return out;
-	};
-
-	
 	Ogre::String StringConverterEx::toString(const Vector3Int &v)
 	{
 		Ogre::String out;

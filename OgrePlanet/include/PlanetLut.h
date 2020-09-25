@@ -24,7 +24,6 @@ namespace OgrePlanet
 		void lookup(const Vector2 &xy, ColourValue &colour) const;
 		void lookup(const Real x, const Real y, ColourValue &colour) const;		
 	protected:
-		void uint32ToColour(const uint32 colour32, ColourValue &colour) const;
 		typedef boost::multi_array<uint32, 2>LutArray;
 		LutArray mLutArray;
 		const uint32 mWidth;

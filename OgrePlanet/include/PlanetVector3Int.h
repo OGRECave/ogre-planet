@@ -19,13 +19,6 @@ namespace OgrePlanet
 	// TODO flesh out operators
 	public:
 		long x, y, z;
-		// for zeroField
-		static const uint32 FIELD_X  = 0;
-		static const uint32 FIELD_Y  = 1;
-		static const uint32 FIELD_Z  = 2;
-		static const uint32 FIELD_XY = 3;
-		static const uint32 FIELD_XZ = 4;
-		static const uint32 FIELD_YZ = 5;
 	public:
 		Vector3Int() : x(0), y(0), z(0) { };
 		Vector3Int(const long _x, const long _y, const long _z) : x(_x), y(_y), z(_z) { };
@@ -91,35 +84,6 @@ namespace OgrePlanet
         {
 			return ( x != v.x || y != v.y || z != v.z );
         };
-
-		inline void zeroField(const uint32 field)
-		{
-			if (field == FIELD_X)
-			{
-				x = 0;
-			}
-			else if (field == FIELD_Y)
-			{
-				y = 0;
-			}
-			else if (field == FIELD_Z)
-			{
-				z = 0;
-			}
-			else if (field == FIELD_XY)
-			{
-				x = y = 0;
-			}
-			else if (field == FIELD_XZ)
-			{
-				x = z = 0;
-			}
-			else if (field == FIELD_YZ)
-			{
-				y = z = 0;
-			}	
-		};
-
 		
 		inline void spherise(const long radius)
 		{
