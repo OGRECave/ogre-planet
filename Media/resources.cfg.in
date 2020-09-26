@@ -1,0 +1,6 @@
+# Resource locations to be added to the default path
+[General]
+Zip=@OGRE_MEDIA_DIR@/packs/SdkTrays.zip
+FileSystem=../Media/materials/textures
+FileSystem=../Media/materials/scripts
+FileSystem=../Media/materials/programs

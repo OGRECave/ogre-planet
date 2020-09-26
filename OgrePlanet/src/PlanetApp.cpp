@@ -1,14 +1,13 @@
-// #define MS_LEAK_DETECT Microsoft leak detection - TODO test for leaks properly
-#ifdef MS_LEAK_DETECT
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-#endif
-
 #include "PlanetApplication.h"
 #include "PlanetLogger.h"
 
 #include "PlanetPlanet.h"
+
+#include <OgreTrays.h>
+#include <OgreCameraMan.h>
+#include <OgreAdvancedRenderControls.h>
+
+#include <iostream>
 
 /*
  * OgrePlanet dynamic level of detail for planetary rendering
@@ -37,12 +36,45 @@
 class PlanetApp : public PlanetApplication 
 {
 public:
-	PlanetApp() : mIcoSphere(NULL) { };
+	PlanetApp() : mIcoSphere(NULL), mFreezeLOD(false) { };
 	virtual ~PlanetApp() { };
 
 protected:
-	 OgrePlanet::Planet *mIcoSphere;
+	// OgreBites
+	OgreBites::TrayManager* mTrayMgr;
+	OgreBites::CameraMan* mCameraMan;       // basic camera controller
+	OgreBites::AdvancedRenderControls* mAdvancedControls;     // sample details panel
+	OgrePlanet::Planet *mIcoSphere;
 
+	bool mFreezeLOD;
+
+	bool frameEnded(const Ogre::FrameEvent& evt)
+	{
+		if ((mIcoSphere != NULL) && (mCamera != NULL))
+		{
+			if (mFreezeLOD == false)
+			{
+				mIcoSphere->render(mCamera);
+			}
+		}
+
+		return true;
+	}
+
+	bool keyPressed(const OgreBites::KeyboardEvent& arg)
+	{
+		if (arg.keysym.sym == OgreBites::SDLK_ESCAPE)
+		{
+			getRoot()->queueEndRendering();
+		}
+		else if (arg.keysym.sym == 'l')
+		{
+			mFreezeLOD = !mFreezeLOD;
+		}
+
+
+		return true;
+	}
 
    /** Define what is in the scene
 	 */
@@ -88,32 +120,44 @@ protected:
 	  */
 	 void createFrameListener(void) 
 	 {
-		  LOG("PlanetApp::createFrameListener()");
-		  mFrameListener = new PlanetFrameListener(mWindow, mCamera);		  
-		  mRoot->addFrameListener(mFrameListener);
-		  mFrameListener->setIcoSphere(mIcoSphere);
+		LOG("PlanetApp::createFrameListener()");
+
+		mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
+		mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+		mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
+		mTrayMgr->hideCursor();
+		addInputListener(mTrayMgr);
+
+		mAdvancedControls= new OgreBites::AdvancedRenderControls(mTrayMgr, mCamera);
+		addInputListener(mAdvancedControls);
 	 };
 
 	
 	 /** Create and point the camera
 	 */
-	 void createCamera(void) 
-	 {
-		 LOG("PlanetApp::createCamera()");
-		 
-		 // Create the camera
-		 mCamera = mSceneMgr->createCamera("PlayerCam");
+	void createCamera(void)
+	{
+		LOG("PlanetApp::createCamera()");
 
-		 // Position it at 800 in Z direction
-		 mCamera->setPosition(Vector3(0,0,2000));
-		 // Look back along -Z
-		 mCamera->lookAt(Vector3(0,0,0));
-		 mCamera->setNearClipDistance(10);
-		 mCamera->setFarClipDistance(10000);
-	 };
+		// Create the camera
+		mCamera = mSceneMgr->createCamera("PlayerCam");
+		mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 
-	 
-	 /** Create a single viewport
+		// Position it at 800 in Z direction
+		mCameraNode->setPosition(Vector3(0, 0, 2000));
+		// Look back along -Z
+		mCameraNode->lookAt(Vector3(0,0,0), Node::TS_WORLD);
+		mCamera->setNearClipDistance(10);
+		mCamera->setFarClipDistance(10000);
+
+		mCameraNode->attachObject(mCamera);
+
+		mCameraMan = new OgreBites::CameraMan(mCameraNode); // create a default camera controller
+		mCameraMan->setStyle(OgreBites::CS_ORBIT);
+		addInputListener(mCameraMan);
+	};
+
+         /** Create a single viewport
 	  */
 	 void createViewports(void)
      {
@@ -122,7 +166,7 @@ protected:
 		// Create one viewport, entire window
 		// Note that the size of the ORGE window / full screen is defined by OGRE setup dialogs
 		// Can be in .cfg file also
-		Viewport* vp = mWindow->addViewport(mCamera);
+		Viewport* vp = getRenderWindow()->addViewport(mCamera);
 		vp->setBackgroundColour(ColourValue(0,0,0));
 
 		// Alter the camera aspect ratio to match the viewport
@@ -138,12 +182,6 @@ protected:
 	};
 
 };
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 
 
@@ -171,17 +209,6 @@ int main(int argc, char **argv)
 	
 	delete myApp;
 	myApp = NULL;
-
-// Dump any leaks
-#ifdef MS_LEAK_DETECT
-	_CrtDumpMemoryLeaks();
-#endif
 	
 	return 0;
 }
-
-
-#ifdef __cplusplus
-}
-#endif
-
