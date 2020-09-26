@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 # specify which version and components you need
-find_package(OGRE 1.11 REQUIRED COMPONENTS Bites Overlay)
+find_package(OGRE 1.12.10 REQUIRED COMPONENTS Bites Overlay)
 
 include_directories(OgrePlanet/include)
 file(GLOB SRCS OgrePlanet/src/*cpp)

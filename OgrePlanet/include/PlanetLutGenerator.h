@@ -1,8 +1,6 @@
 #ifndef __PLANET_LUT_GENERATOR_
 #define __PLANET_LUT_GENERATOR_
 
-#include <boost/multi_array.hpp>
-
 #include "OgrePrerequisites.h"
 
 #include "PlanetPerlin.h"
@@ -31,7 +29,7 @@ namespace OgrePlanet
 		*/
 		LutGenerator(const uint32 texStride, const float perlinScale = 1.0f) :
 		mTexStride(texStride), mPerlinStep(texStride /(texStride * 1 / perlinScale)),
-		mColourArray(boost::extents[texStride][texStride])
+		mColourArray(PF_A8R8G8B8, texStride, texStride)
 		{
 			assert(perlinScale	> 0);
 		};
@@ -75,13 +73,7 @@ namespace OgrePlanet
 			Vector3 rockSnow(peak.y, trough.z, 1);
 
 			// Zero array - default is (1, 1, 1, 1)
-			for (uint32 x=0; x<mTexStride; x++)
-			{
-				for (uint32 y=0; y<mTexStride; y++)
-				{
-					mColourArray[x][y] = ColourValue(0, 0, 0, 0);
-				}
-			}
+			mColourArray.setTo(ColourValue(0, 0, 0, 0));
 
 			// Set up perlin noise generator
 			mPerlinNoise.setNumOctaves(20);
@@ -101,33 +93,7 @@ namespace OgrePlanet
 		/// Save Lut to disk
 		void save(const String &fileName)
 		{
-			// Copy contents of mColourArray to new char array
-			// Note: will be cleaned up when Image destructor called as 'autoDelete = true'
-			uchar *dump;
-			dump = new uchar[mTexStride*mTexStride*4];
-			uchar *dumpPtr = dump;
-			for (uint32 y=0; y<mTexStride; y++)
-			{
-				for (uint32 x=0; x<mTexStride; x++)
-				{
-#if  OGRE_ENDIAN == OGRE_ENDIAN_LITTLE
-					*dumpPtr++ = uchar(mColourArray[x][y].b * 255);
-					*dumpPtr++ = uchar(mColourArray[x][y].g * 255);
-					*dumpPtr++ = uchar(mColourArray[x][y].r * 255);
-					*dumpPtr++ = uchar(mColourArray[x][y].a * 255);	
-#elif  OGRE_ENDIAN == OGRE_ENDIAN_BIG
-					// XXX Not tested					
-					*dumpPtr++ = uchar(mColourArray[x][y].a * 255);	
-					*dumpPtr++ = uchar(mColourArray[x][y].r * 255);
-					*dumpPtr++ = uchar(mColourArray[x][y].g * 255);
-					*dumpPtr++ = uchar(mColourArray[x][y].b * 255);
-#endif
-				}
-			}
-
-			Image img;
-			img.loadDynamicImage(dump, mTexStride, mTexStride, 1, PF_A8R8G8B8, true);
-			img.save(fileName);
+			mColourArray.save(fileName);
 		};
 
 	private:
@@ -164,20 +130,19 @@ namespace OgrePlanet
 			// XXX TODO Doesn't work well - another technique required ?		
 			if (!empty(x, y))
 			{
-				mColourArray[x][y] += colour;
-				mColourArray[x][y] *= 0.5f;
+				mColourArray.setColourAt((mColourArray.getColourAt(x, y, 0) + colour) / 2, x, y, 0);
 			}
 			else
 			{
-				mColourArray[x][y] = colour;
+				mColourArray.setColourAt(colour, x, y, 0);
 			}
 		};
 
 		
 		bool empty(const uint32 x, const uint32 y)
 		{
-			return ((mColourArray[x][y].a == 0) && (mColourArray[x][y].r == 0)
-				 && (mColourArray[x][y].g == 0) && (mColourArray[x][y].b == 0));
+			uchar* col = mColourArray.getData(x, y);
+			return ((col[0] == 0) && (col[1] == 0) && (col[2] == 0) && (col[3] == 0));
 		};
 
 		
@@ -222,7 +187,7 @@ namespace OgrePlanet
 				{
 					if (empty(x, y))
 					{
-						mColourArray[x][y] = ColourValue(1, 0, 0, 0);
+						mColourArray.setColourAt(ColourValue(1, 0, 0, 0), x, y, 0);
 					}
 				}
 			}
@@ -331,8 +296,7 @@ namespace OgrePlanet
 		};
 
 		const uint32 mTexStride;  // (x, y) stride of texture
-		typedef boost::multi_array<ColourValue, 2> ColourArray;
-		ColourArray mColourArray; // Texture made up of colour values
+		Image mColourArray; // Texture made up of colour values
 		PerlinNoise mPerlinNoise; // Perlin noise generator
 		const float mPerlinStep;  // Scaling factor for perlin noise lookup
 	};

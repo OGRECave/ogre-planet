@@ -173,13 +173,14 @@ namespace OgrePlanet
 	
 	void QuadRoot::finalise(const VectorVector3 &heightData, const Real magFactor)
 	{
-		/* Create lookup table XXX only needs to be created once
+		/* Create lookup table XXX only needs to be created once */
+		#if 0
 		LutGenerator lutGenerator(512, 0.05f);		
 		Vector2 peak(0.70f, 0.90f);
 		Vector3 trough(0.65f, 0.80f, 0.95f);		
 		lutGenerator.generate(peak, trough, true, true, true, 0.2f);
-		lutGenerator.save("../../Media/materials/textures/lookup.png"); 
-		*/
+		lutGenerator.save("../Media/materials/textures/lookup.png"); 
+		#endif
 
 		// Set heights and establish min / max height of each face
 		Real minHeight[QuadFace_end], maxHeight[QuadFace_end];		

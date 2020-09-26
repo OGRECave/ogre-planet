@@ -31,41 +31,30 @@ namespace OgrePlanet
 {
 	using namespace Ogre;
 
-	Lut::Lut(const Image *img, const uint32 width, const uint32 height) : 
-	mLutArray(boost::extents[width][height]), mWidth(width), mHeight(height)
+	Lut::Lut(const Image& img)
 	{ 		
 		// Copy image data to array
-		const PixelBox &pb = img->getPixelBox();
-		for (uint32 y=0; y<mHeight; y++)
-		{
-			uint32 *data = reinterpret_cast<uint32 *>(pb.data) + y*pb.rowPitch;
-			for (uint32 x=0; x<mWidth; x++)
-			{	
-				// Set the colour components properly
-				const uint32 pixel = *data++;
-				mLutArray[x][y] = pixel; 
-			}
-		}
+		mLutArray = img;
 	};
 
 	
 	Lut Lut::createLut(const String &name, const String &group)
 	{
 		// Load the image
-		Image *img = new Image();
-		img->load(name, group);
+		Image img;
+		img.load(name, group);
 		
 
 		// Assert that the image loaded  TODO throw exceptions
-		if (img == NULL)
+		if (img.getData() == NULL)
 		{
 			LOG("Lut::createLut() " + name + ", " + group + " did not load");
 		} 
-		else if (img->getSize() == 0)
+		else if (img.getSize() == 0)
 		{
 			LOG("Lut::createLut() " + name + ", " + group + " did not load");
 		} 
-		else if(img->getFormat() != PF_A8R8G8B8)
+		else if(img.getFormat() != PF_A8R8G8B8)
 		{
 			LOG("Lut::createLut() " + name + ", " + group + " has no alpha channel");
 		}
@@ -76,13 +65,7 @@ namespace OgrePlanet
 		}
 
 		// Create new Lut
-		Lut lut(img, img->getWidth(), img->getHeight());
-
-		// Clean up image 
-		delete img;
-		img = NULL;
-
-		return lut;
+		return Lut(img);
 	};
 
 	
@@ -91,10 +74,12 @@ namespace OgrePlanet
 		// Range check (0..1)
 		assert((xy.x >= 0) && (xy.x <= 1.0));
 		assert((xy.y >= 0) && (xy.y <= 1.0));
-		
-		const uint32 xLook = (uint32)float((mWidth-1) * xy.x);
-		const uint32 yLook = (uint32)float((mHeight-1) * xy.y);
-		return mLutArray[xLook][yLook];
+
+		const uint32 xLook = (uint32) float((mLutArray.getWidth() - 1) * xy.x);
+		const uint32 yLook = (uint32) float((mLutArray.getHeight() - 1) * xy.y);
+		uint32 ret;
+		memcpy(&ret, mLutArray.getData(xLook, yLook), sizeof(uint32));
+		return ret;
 	};
 	
 	
@@ -113,7 +98,7 @@ namespace OgrePlanet
 	void Lut::lookup(const Vector2 &xy, ColourValue &colour) const
 	{
 		uint32 colour32 = lookup(xy);
-		PixelUtil::unpackColour(&colour, PF_A8R8G8B8, &colour32);
+		PixelUtil::unpackColour(&colour, mLutArray.getFormat(), &colour32);
 	};
 
 } // namespace
