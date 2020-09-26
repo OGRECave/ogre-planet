@@ -41,7 +41,7 @@ namespace OgrePlanet
 	mVertexCount((triDivs+1)*(triDivs+1)), 
 	mTriDivs(triDivs+1), 
 	mMaxIndexCount(6*((triDivs+1)*(triDivs+1))),
-	mVertexArray(boost::extents[triDivs+1][triDivs+1]),
+	mVertexArray(mVertexCount),
 	mLastLod(0xFFFFFFFF),
 	mVisibleCache(false)
 	{
@@ -94,7 +94,7 @@ namespace OgrePlanet
 				default:
 					break;
 				}
-				mVertexArray[x][y].position = v;				
+				mVertexArray[x*mTriDivs + y].position = v;				
 			}
 		}		
 	};
@@ -211,23 +211,23 @@ namespace OgrePlanet
 			for (uint32 y=0; y<mTriDivs; y++)
 			{	
 #ifndef NO_SPHERISE
-				Utils::spherise(mVertexArray[x][y].position, radius);
+				Utils::spherise(mVertexArray[x*mTriDivs + y].position, radius);
 #endif
 				if ((x == 0) && (y == 0))
 				{
 					// Pickup first vertex as min / max
-					min = max = mVertexArray[x][y].position;
+					min = max = mVertexArray[x*mTriDivs + y].position;
 				}
 				else
 				{					
 					// Save min and max for bounds update
-					min.x = ((min.x > mVertexArray[x][y].position.x) ? mVertexArray[x][y].position.x : min.x);
-					min.y = ((min.y > mVertexArray[x][y].position.y) ? mVertexArray[x][y].position.y : min.y);
-					min.z = ((min.z > mVertexArray[x][y].position.z) ? mVertexArray[x][y].position.z : min.z);
+					min.x = ((min.x > mVertexArray[x*mTriDivs + y].position.x) ? mVertexArray[x*mTriDivs + y].position.x : min.x);
+					min.y = ((min.y > mVertexArray[x*mTriDivs + y].position.y) ? mVertexArray[x*mTriDivs + y].position.y : min.y);
+					min.z = ((min.z > mVertexArray[x*mTriDivs + y].position.z) ? mVertexArray[x*mTriDivs + y].position.z : min.z);
 
-					max.x = ((max.x < mVertexArray[x][y].position.x) ? mVertexArray[x][y].position.x : max.x);
-					max.y = ((max.y < mVertexArray[x][y].position.y) ? mVertexArray[x][y].position.y : max.y);
-					max.z = ((max.z < mVertexArray[x][y].position.z) ? mVertexArray[x][y].position.z : max.z);
+					max.x = ((max.x < mVertexArray[x*mTriDivs + y].position.x) ? mVertexArray[x*mTriDivs + y].position.x : max.x);
+					max.y = ((max.y < mVertexArray[x*mTriDivs + y].position.y) ? mVertexArray[x*mTriDivs + y].position.y : max.y);
+					max.z = ((max.z < mVertexArray[x*mTriDivs + y].position.z) ? mVertexArray[x*mTriDivs + y].position.z : max.z);
 				}
 			}
 		}
@@ -303,25 +303,25 @@ namespace OgrePlanet
 			for (uint32 x=0; x<mTriDivs; x++)					
 			{		  
 				// Position
-				Vector3 v = mVertexArray[x][y].position;
+				Vector3 v = mVertexArray[x*mTriDivs + y].position;
 				*pVertex++ = (float)v.x;
 				*pVertex++ = (float)v.y;
 				*pVertex++ = (float)v.z;
 
 				// Normal (water level) 
-				Vector3 vn = mVertexArray[x][y].normal; 
+				Vector3 vn = mVertexArray[x*mTriDivs + y].normal; 
 				*pVertex++ = (float)vn.x;
 				*pVertex++ = (float)vn.y;
 				*pVertex++ = (float)vn.z;
 				
 				// Diffuse (texture blending) // XXX TODO OpenGL BGRA ??
-				*pVertex++ = (float)mVertexArray[x][y].diffuse.r;
-				*pVertex++ = (float)mVertexArray[x][y].diffuse.g;
-				*pVertex++ = (float)mVertexArray[x][y].diffuse.b;
-				*pVertex++ = (float)mVertexArray[x][y].diffuse.a;
+				*pVertex++ = (float)mVertexArray[x*mTriDivs + y].diffuse.r;
+				*pVertex++ = (float)mVertexArray[x*mTriDivs + y].diffuse.g;
+				*pVertex++ = (float)mVertexArray[x*mTriDivs + y].diffuse.b;
+				*pVertex++ = (float)mVertexArray[x*mTriDivs + y].diffuse.a;
 				
 				// Texcoords 
-				Vector2 t = mVertexArray[x][y].texCoord0;
+				Vector2 t = mVertexArray[x*mTriDivs + y].texCoord0;
 				*pVertex++ = (float)t.x;
 				*pVertex++ = (float)t.y;	
 			}
@@ -513,8 +513,8 @@ namespace OgrePlanet
 		{
 			for (uint32 y=0; y<mTriDivs; y++)
 			{
-				mVertexArray[x][y].texCoord0.x = min.x+xStep*x;
-				mVertexArray[x][y].texCoord0.y = min.y+yStep*y;
+				mVertexArray[x*mTriDivs + y].texCoord0.x = min.x+xStep*x;
+				mVertexArray[x*mTriDivs + y].texCoord0.y = min.y+yStep*y;
 			}
 		}
 		populateVertexBuffer();
@@ -565,7 +565,7 @@ namespace OgrePlanet
 				{
 					// Determine which side of the plane defined by 
 					// random vector 'rand' this vertex lies on
-					Vector3 d(mVertexArray[x][y].position - rand);
+					Vector3 d(mVertexArray[x*mTriDivs + y].position - rand);
 					if (d.dotProduct(rand) > 0) 
 					{
 						// Increase the 'height' of this vertex					
@@ -586,12 +586,12 @@ namespace OgrePlanet
 			for (uint32 y=0; y<mTriDivs; y++)
 			{
 				// Save the original sphere vertex position as water level
-				mVertexArray[x][y].normal = mVertexArray[x][y].position;
+				mVertexArray[x*mTriDivs + y].normal = mVertexArray[x*mTriDivs + y].position;
 
 				// Get a normal and project distance speced in offset, add to original vertex
-				Vector3 project = mVertexArray[x][y].position.normalisedCopy() * magFactor;
+				Vector3 project = mVertexArray[x*mTriDivs + y].position.normalisedCopy() * magFactor;
 				project *= offset.at(x+y*mTriDivs);
-				mVertexArray[x][y].position += project;
+				mVertexArray[x*mTriDivs + y].position += project;
 			}
 		}
 
@@ -614,18 +614,18 @@ namespace OgrePlanet
 			{	
 				
 				// Calculate slope & absolute height
-				Vector3 bias = mVertexArray[x][y].position;
+				Vector3 bias = mVertexArray[x*mTriDivs + y].position;
 				Real height = bias.length();
 				Real slope = 0;
 				Vector3 slopes[NUM_SLOPE];							
-				slopes[0] = ((x != 0) && (y != 0)) ? mVertexArray[x-1][y-1].position : mVertexArray[x][y].position;
-				slopes[1] = (x != 0) ? mVertexArray[x-1][y].position : mVertexArray[x][y].position;
-				slopes[2] = ((x != 0) && (y != mTriDivs-1)) ? mVertexArray[x-1][y+1].position : mVertexArray[x][y].position;
-				slopes[3] = (y != mTriDivs-1) ? mVertexArray[x][y+1].position : mVertexArray[x][y].position;
-				slopes[4] = ((x != mTriDivs-1) && (y != mTriDivs-1)) ? mVertexArray[x+1][y+1].position : mVertexArray[x][y].position;
-				slopes[5] = (x != mTriDivs-1) ? mVertexArray[x+1][y].position : mVertexArray[x][y].position;
-				slopes[6] = ((x != mTriDivs-1) && (y != 0)) ? mVertexArray[x+1][y-1].position : mVertexArray[x][y].position;
-				slopes[7] = (y != 0) ? mVertexArray[x][y-1].position : mVertexArray[x][y].position;				
+				slopes[0] = ((x != 0) && (y != 0)) ? mVertexArray[(x-1)*mTriDivs + y-1].position : mVertexArray[x*mTriDivs + y].position;
+				slopes[1] = (x != 0) ? mVertexArray[(x-1)*mTriDivs + y].position : mVertexArray[x*mTriDivs + y].position;
+				slopes[2] = ((x != 0) && (y != mTriDivs-1)) ? mVertexArray[(x-1)*mTriDivs + y+1].position : mVertexArray[x*mTriDivs + y].position;
+				slopes[3] = (y != mTriDivs-1) ? mVertexArray[x*mTriDivs + y+1].position : mVertexArray[x*mTriDivs + y].position;
+				slopes[4] = ((x != mTriDivs-1) && (y != mTriDivs-1)) ? mVertexArray[(x+1)*mTriDivs + y+1].position : mVertexArray[x*mTriDivs + y].position;
+				slopes[5] = (x != mTriDivs-1) ? mVertexArray[(x+1)*mTriDivs + y].position : mVertexArray[x*mTriDivs + y].position;
+				slopes[6] = ((x != mTriDivs-1) && (y != 0)) ? mVertexArray[(x+1)*mTriDivs + y - 1].position : mVertexArray[x*mTriDivs + y].position;
+				slopes[7] = (y != 0) ? mVertexArray[x*mTriDivs + y-1].position : mVertexArray[x*mTriDivs + y].position;				
 				for (uint32 i=0; i<NUM_SLOPE; i++)
 				{
 					slopes[i] -= bias;					
@@ -645,8 +645,8 @@ namespace OgrePlanet
 								
 				// The height values need to be normalised, but min/max heights for sphere currently unknown
 				// Hacky store in a, r in interum
-				mVertexArray[x][y].diffuse.a = slope;
-				mVertexArray[x][y].diffuse.r = height;
+				mVertexArray[x*mTriDivs + y].diffuse.a = slope;
+				mVertexArray[x*mTriDivs + y].diffuse.r = height;
 
 				// Record min/max height as we go
 				if ((x == 0) && (y == 0))
@@ -674,14 +674,14 @@ namespace OgrePlanet
 			for (uint32 y=0; y<mTriDivs; y++)
 			{	
 				// Pickup stored slope, height values set range (0..1) for lut lookup
-				Real slope = mVertexArray[x][y].diffuse.a;
-				Real height = mVertexArray[x][y].diffuse.r;
+				Real slope = mVertexArray[x*mTriDivs + y].diffuse.a;
+				Real height = mVertexArray[x*mTriDivs + y].diffuse.r;
 				height -= minHeight;
 				height /= heightDif;
 				
 				// Do lookup and assign
 				Vector2 xy(height, slope);
-				lut.lookup(xy, mVertexArray[x][y].diffuse);
+				lut.lookup(xy, mVertexArray[x*mTriDivs + y].diffuse);
 			}
 		}
 		populateVertexBuffer();

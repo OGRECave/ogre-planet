@@ -1,8 +1,6 @@
 #ifndef __PLANET_QUAD__
 #define __PLANET_QUAD__
 
-#include <boost/multi_array.hpp>
-
 #include "OgrePrerequisites.h"
 #include "OgreSceneManager.h"
 
@@ -42,11 +40,11 @@ namespace OgrePlanet
 		void normaliseSlopeHeight(const Real minHeight, const Real heightDif, const Lut &lut);
 	protected:		
 		typedef std::vector<uint16>IndexVector16;
-		typedef boost::multi_array<QuadVertex, 2> VertexArray;
-		VertexArray mVertexArray;
-		const uint32 mTriDivs;
+		typedef std::vector<QuadVertex> VertexArray;
 		const uint32 mVertexCount;
+		const uint32 mTriDivs;
 		const uint32 mMaxIndexCount;
+		VertexArray mVertexArray;
 		uint32 mLastLod;
 		bool mVisibleCache;
 
